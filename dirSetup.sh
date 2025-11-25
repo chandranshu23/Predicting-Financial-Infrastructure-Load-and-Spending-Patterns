@@ -37,14 +37,14 @@ dataStaging="dataStaging"
 #creating the dir structre on local file system first
 # Deleting directories if they already exits on linux home
 
-if [ -d "${HOME}${projectHome}" ]; then
-	rm -rf "${HOME}${projectHome}"
-	error_handle "Error Occured while cleaning already existing directories! please try again."
-fi
+#if [ -d "${HOME}${projectHome}" ]; then
+#	rm -rf "${HOME}${projectHome}"
+#	error_handle "Error Occured while cleaning already existing directories! please try again."
+#fi
 
 #creating dir
-mkdir -p "${HOME}${projectHome}/"{${sparkDir},${cleanedDir},${warehouseDir},${hiveDir},${airflowDAGs},${dataStaging}}
-error_handle "Error occured while creating dir structure on Linux fs! please try again."
+#mkdir -p "${HOME}${projectHome}/"{${sparkDir},${cleanedDir},${warehouseDir},${hiveDir},${airflowDAGs},${dataStaging}}
+#error_handle "Error occured while creating dir structure on Linux fs! please try again."
 
 #checking for hdfs connection
 hdfs dfs -ls > /dev/null
