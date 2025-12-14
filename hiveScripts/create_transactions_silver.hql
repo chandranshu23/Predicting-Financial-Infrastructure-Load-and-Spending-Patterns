@@ -20,8 +20,7 @@ CREATE EXTERNAL TABLE transactions_silver (
     merchant_state STRING,
     zip STRING,
     mcc INT,
-    errors STRING,y
-
+    errors STRING,
     is_fraud STRING,
     transaction_timestamp TIMESTAMP
 )

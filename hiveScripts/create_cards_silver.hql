@@ -11,7 +11,7 @@ DROP table if exists cards_silver;
 
 -- Creating the schema for the cards hive table
 create external Table cards_silver (
-	`user` STRING,
+	`user` INT,
 	card_index INT,
 	card_brand STRING,
 	card_type STRING,
