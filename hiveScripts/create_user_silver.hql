@@ -27,5 +27,5 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financial_db.users_silver (
     num_credit_cards INT                      -- Number of active credit cards owned
 )
 STORED AS ORC                                  -- Optimized columnar storage format
-LOCATION '/user/talentum/projectMaster/warehouseDir/users';  -- HDFS path for data storage
+LOCATION '/user/talentum/projectMaster/warehouseDir/users';
 
