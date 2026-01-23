@@ -15,7 +15,7 @@ create external Table cards_silver (
 	card_index INT,
 	card_brand STRING,
 	card_type STRING,
-	card_number INT,
+	card_number BIGINT,
 	expires STRING,
 	cvv INT,
 	has_chip STRING,
