@@ -280,9 +280,7 @@
                 </div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="getForecast()">📊 Get Forecast</button>
                 <button class="btn btn-secondary" onclick="getRecommendations()">💡 Get Recommendations</button>
-                <button class="btn btn-danger" onclick="getAnalysis()">📈 Full Analysis</button>
             </div>
         </div>
 
@@ -309,46 +307,10 @@
             <div id="recommendationsContainer"></div>
         </div>
 
-        <div class="card" id="analysisCard" style="display: none;">
-            <h2>Comprehensive Analysis</h2>
-            <div id="analysisContainer"></div>
-        </div>
     </div>
 
     <script>
         let forecastChart = null;
-
-        async function getForecast() {
-            clearError();
-            showLoading('metricsContainer');
-            
-            const hoursAhead = document.getElementById('hoursAhead').value;
-            const currentLoad = document.getElementById('currentLoad').value;
-            
-            try {
-                const response = await fetch('/api/forecast', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        hours_ahead: parseInt(hoursAhead),
-                        current_load: currentLoad ? parseFloat(currentLoad) : null
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayForecast(data.forecast);
-                    displayBasicMetrics(data.forecast);
-                } else {
-                    showError(data.error || 'Failed to get forecast');
-                }
-            } catch (error) {
-                showError('Error: ' + error.message);
-            }
-        }
 
         async function getRecommendations() {
             clearError();
@@ -388,45 +350,19 @@
             }
         }
 
-        async function getAnalysis() {
-            clearError();
-            showLoading('analysisContainer');
-            document.getElementById('analysisCard').style.display = 'block';
-            
-            const hoursAhead = document.getElementById('hoursAhead').value;
-            const currentCapacity = document.getElementById('currentCapacity').value;
-            const currentLoad = document.getElementById('currentLoad').value;
-            const scalingThreshold = document.getElementById('scalingThreshold').value / 100;
-            
-            try {
-                const response = await fetch('/api/capacity/analyze', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        hours_ahead: parseInt(hoursAhead),
-                        current_capacity: parseFloat(currentCapacity),
-                        current_load: currentLoad ? parseFloat(currentLoad) : null,
-                        scaling_threshold: scalingThreshold
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayForecast(data.forecast.forecast);
-                    displayAnalysis(data.analysis);
-                    displayBasicMetrics(data.forecast.forecast, data.analysis.recommendations);
-                } else {
-                    showError(data.error || 'Failed to get analysis');
-                }
-            } catch (error) {
-                showError('Error: ' + error.message);
-            }
-        }
-
         function displayForecast(forecast) {
+            // Ensure forecast is an array
+            if (!Array.isArray(forecast)) {
+                console.error('Forecast is not an array:', forecast);
+                showError('Invalid forecast data format');
+                return;
+            }
+            
+            if (forecast.length === 0) {
+                showError('No forecast data available');
+                return;
+            }
+            
             const ctx = document.getElementById('forecastChart').getContext('2d');
             
             const labels = forecast.map(f => {
@@ -555,42 +491,6 @@
                 });
                 html += '</ul>';
             }
-            
-            container.innerHTML = html;
-        }
-
-        function displayAnalysis(analysis) {
-            const container = document.getElementById('analysisContainer');
-            
-            let html = `
-                <div class="recommendation maintain">
-                    <h3>Risk Assessment</h3>
-                    <p><strong>Risk Level:</strong> <span class="status-badge status-${analysis.risk_assessment.risk_level}">${analysis.risk_assessment.risk_level.toUpperCase()}</span></p>
-                    <p>Critical Hours: ${analysis.risk_assessment.critical_hours}</p>
-                    <p>Over Capacity Hours: ${analysis.risk_assessment.over_capacity_hours}</p>
-                    <p>Under Utilized Hours: ${analysis.risk_assessment.under_utilized_hours}</p>
-                </div>
-                
-                <h3 style="margin-top: 20px;">Scaling Scenarios</h3>
-            `;
-            
-            Object.entries(analysis.scaling_scenarios).forEach(([name, scenario]) => {
-                html += `
-                    <div class="metric" style="margin: 10px 0;">
-                        <div>
-                            <strong>${name.charAt(0).toUpperCase() + name.slice(1)}</strong><br>
-                            <small>${scenario.description}</small>
-                        </div>
-                        <div>
-                            <span class="metric-value">${scenario.capacity.toLocaleString()}</span><br>
-                            <small>Cost Impact: ${scenario.cost_impact}</small>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '<h3 style="margin-top: 20px;">Hourly Patterns</h3>';
-            html += `<p>Peak Hour: ${analysis.hourly_patterns.peak_hour}:00 | Low Hour: ${analysis.hourly_patterns.low_hour}:00</p>`;
             
             container.innerHTML = html;
         }
