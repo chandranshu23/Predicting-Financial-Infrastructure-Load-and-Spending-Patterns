@@ -27,10 +27,10 @@ wheels/
 instance/
 .webassets-cache
 
-# Model files (large, should be in separate storage)
-models/*.pth
-models/*.pkl
-!models/.gitkeep
+# # Model files (large, should be in separate storage)
+# models/*.pth
+# models/*.pkl
+# !models/.gitkeep
 
 # IDE
 .vscode/
